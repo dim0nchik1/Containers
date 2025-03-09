@@ -1,64 +1,48 @@
 import Team from '../js/app.js';
+import ErrorRepository from "../js/ErrorRepository";
 
-const first = { character: 'character_1' };
-const second = { character: 'character_2' };
-const doubleFirst = first;
-const lectorObject = {
-    name: 'Лучник',
-    type: 'Bowman',
-    health: 50,
-    level: 3,
-    attack: 40,
-    defence: 10,
-};
+
+
 
 test('from lector', () => {
     const team = new Team();
-    expect(() => {
-        team.add(lectorObject);
-        team.add({
-            name: 'Лучник',
-            type: 'Bowman',
-            health: 50,
-            level: 3,
-            attack: 40,
-            defence: 10,
-        });
-    }).toThrow('The character has already been added');
+    team.add("Yan")
+    expect(() => team.add("Yan")).toThrow('This character is already in the team.');
 });
 
-test('no throw error with different characters', () => {
-    const myTeam = new Team();
-    expect(() => {
-        myTeam.add(first);
-        myTeam.add(second);
-    }).not.toThrow();
-});
+test("no throw error with different characters", () => {
+    const team = new Team();
+    team.add("user")
+    expect(() => team.add("man")).not.toThrow();
+})
 
-test('throw error with the same characters', () => {
-    const myTeam = new Team();
-    expect(() => {
-        myTeam.add(first);
-        myTeam.add(doubleFirst);
-    }).toThrow('The character has already been added');
-});
-
-test('convert to Array', () => {
-    const myTeam = new Team();
-    myTeam.add(first);
-    myTeam.add(second);
-    expect(myTeam.toArray()).toEqual([first, second]);
-});
+test("add all without duplicate", () => {
+    const team = new Team();
+    team.addAll("Yan","Yan","Petr")
+    expect(team.toArray()).toEqual(["Yan", "Petr",]);
+})
 
 test('add all without throw', () => {
     const myTeam = new Team();
     expect(() => {
-        myTeam.addAll([first, doubleFirst, second]);
+        myTeam.addAll("Yan","Yan","Petr");
     }).not.toThrow();
 });
 
-test('add all without duplicate', () => {
-    const myTeam = new Team();
-    const addedMyTeam = myTeam.addAll(first, doubleFirst, second);
-    expect(addedMyTeam.toArray()).toEqual([first, second]);
-});
+test('convert to Array', () => {
+    const team = new Team();
+    team.add("Yan")
+    team.add("Petr");
+    expect(team.toArray()).toEqual(["Yan", "Petr",]);
+})
+
+
+test('should return the error message for a known code', () => {
+    const errorRepo = new ErrorRepository();
+    errorRepo.addError(404,'Not Found')
+    expect(errorRepo.translate(404)).toBe('Not Found')
+})
+test('should return "Unknown error" for an unknown code', () => {
+    const errorRepo = new ErrorRepository();
+    expect(errorRepo.translate(404)).toBe('Unknown error')
+})
